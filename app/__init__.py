@@ -7,6 +7,7 @@ from flask_admin import Admin
 from flask_migrate import Migrate
 from flask_bootstrap import Bootstrap
 from flask_moment import Moment
+from app.config.settings import BaseConfig, DevConfig, ProductionConfig, TestingConfig
 
 
 metadata = MetaData(
@@ -33,16 +34,16 @@ def create_app():
     
     app = Flask(__name__, static_folder='static')
     if os.getenv('ENV', "development") == "production":
-      app.config.from_object(app.config.settings.ProductionConfig)      
+      app.config.from_object(ProductionConfig)      
     elif os.getenv('ENV', "development") == "testing":
       app.logger.info("Staring Testing.")
       print("Staring Testing")
-      app.config.from_object(app.config.settings.TestingConfig)      
+      app.config.from_object(TestingConfig)      
     else:
       app.logger.info("Staring Local Development.")
       print("Staring Local Development")
-      app.config.from_object(app.config.settings.DevelopmentConfig)
-    db.init_app(app)
+      app.config.from_object(DevConfig)
+
     # initialize SQLAlchemy
     db.init_app(app)
     
@@ -64,7 +65,7 @@ def create_app():
     from app.main import bp as main_bp
     app.register_blueprint(main_bp)
 
-    #app.app_context().push()
+    app.app_context().push()
 
    
 

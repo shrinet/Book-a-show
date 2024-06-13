@@ -20,3 +20,14 @@ class ProductionConfig(BaseConfig):
    BASE_DIR = os.path.abspath(os.path.dirname(__file__))
    SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(BASE_DIR, 'app_prod.db')
    SQLALCHEMY_MIGRATE_REPO = os.path.join(BASE_DIR, 'db_repository')
+
+
+class TestingConfig(BaseConfig):
+   FLASK_ENV = 'testing'
+   TESTING = True
+   BASE_DIR = os.path.abspath(os.path.dirname(__file__))
+   SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(BASE_DIR, 'app_test.db')
+   SQLALCHEMY_MIGRATE_REPO = os.path.join(BASE_DIR, 'db_repository')
+   WTF_CSRF_ENABLED = False
+   UPLOADED_FILES = os.path.join(BASE_DIR,'app/static')
+   SECURITY_FRESHNESS_GRACE_PERIOD = 6000
