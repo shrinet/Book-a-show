@@ -1,0 +1,13 @@
+.idea/
+.vscode/
+.virtualenv/
+__pycache__/
+.tox/
+.coverage
+.coverage.*
+htmlcov/
+docs/_build/
+dist/
+venv/
+.DS_Store
+node_modules/
