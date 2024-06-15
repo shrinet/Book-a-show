@@ -1,0 +1,66 @@
+{% extends 'bootstrap/base.html' %}
+
+{% block title %}
+    {% if title %}{{ title }} - ShowTime{% else %}{{ 'Welcome to ShowTime' }}{% endif %}
+{% endblock %}
+
+{% block navbar %}
+    <nav class="navbar navbar-default">
+        <div class="container">
+            <div class="navbar-header">
+                <img src="{{url_for('static', filename='/assets/show-time.jpeg')}}" width="50"/>
+                <a class="navbar-brand" href="{{ url_for('main.index') }}">ShowTime</a>
+            </div>
+            <ul class="nav nav-pills">
+                <li class="nav-item"><a href="{{ url_for('main.index') }}" class="nav-link active" aria-current="page">Home</a></li>
+                <li class="nav-item"><a href="#" class="nav-link">Explore</a></li>
+                
+              </ul>
+              <ul class="nav">
+                {% if current_user.is_anonymous %}
+                    <li class="nav-item"><a href="{{ url_for('auth.login') }}">{{ 'Login' }}</a></li>
+                {% else %}
+                {% if current_user.isAdmin %}
+                    <li class="nav-item"><a href="{{ url_for('main.admin_dashboard') }}" class="nav-link link-dark px-2"> Admin Dashboard</li>
+                {% endif %}
+                <li class="nav-item"><a class="nav-link link-dark px-2" href="{{ url_for('main.user', username=current_user.username) }}">{{ 'Profile' }}</a></li>
+                <li class="nav-item"><a class="nav-link link-dark px-2" href="{{ url_for('auth.logout') }}">{{ 'Logout' }}</a></li>
+                {% endif %}
+              </ul>
+            
+        </div>
+    </nav>
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        {% if current_user.is_authenticated %}
+        {% endif %}
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            {% for message in messages %}
+            <div class="alert alert-info" role="alert">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+        {% endwith %}
+
+        
+        {% block app_content %}{% endblock %}
+    </div>
+{% endblock %}
+
+{% block scripts %}
+    {{ super() }}
+    {{ moment.include_moment() }}
+    {{ moment.lang(g.locale) }}
+    <script>
+      
+    </script>
+    <style>
+        .card img {
+    width: 200px; /* You can set the dimensions to whatever you want */
+    height: 200px !important;
+    object-fit: cover;
+}
+    </style>
+{% endblock %}

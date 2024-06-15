@@ -32,7 +32,7 @@ moment = Moment()
 
 def create_app():
     
-    app = Flask(__name__, static_folder='static')
+    app = Flask(__name__, static_folder='static', template_folder='templates')
     if os.getenv('ENV', "development") == "production":
       app.config.from_object(ProductionConfig)      
     elif os.getenv('ENV', "development") == "testing":

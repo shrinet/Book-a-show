@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% import 'bootstrap/wtf.html' as wtf %}
+
+{% block app_content %}
+    <h1> Hi, {{ current_user.username }}! </h1>
+    <div class="row row-cols-1 row-cols-md-2 g-4">
+        {% for show in shows %}
+            {% include '_show.html' %}
+        {% endfor %}
+    </div>
+    
+    <nav aria-label="Page navigation shows">
+        <ul class="pagination">
+          <li class="page-item previous{% if not prev_url %} disabled{% endif %}">
+            <a class="page-link" href="{{ prev_url or '#' }}">Previous</a>
+            </li>
+          
+          <li class="page-item next{% if not next_url %} disabled{% endif %}">
+            <a class="page-link" href="{{ next_url or '#' }}">Next</a>
+            </li>
+        </ul>
+      </nav>
+{% endblock %}
