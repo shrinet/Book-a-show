@@ -68,3 +68,95 @@ class Role(db.Model, RoleMixin):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(64), nullable=False)
     description = db.Column(db.String(64), nullable=False)
+
+
+class Venue( db.Model):
+    __tablename__ = "venue"
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(64), nullable=False)
+    place = db.Column(db.String(64), nullable=False)
+    capacity = db.Column(db.Integer, nullable=False, default=0)
+    timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+    shows = db.relationship('Show',
+                                    foreign_keys='Show.venue_id',
+                                    backref='venue', lazy='dynamic')
+
+    def __repr__(self):
+        return '<Venue {}>'.format(self.name)
+    
+
+
+class Show( db.Model):
+    __tablename__ = "show"
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(64), nullable=False)
+    tags = db.Column(db.String(64))
+    price = db.Column(db.Integer, nullable=False, default=0)
+    date_from = db.Column(db.Date)
+    date_to   = db.Column(db.Date)
+    timing = db.Column(db.String(255))
+    timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+    venue_id = db.Column(db.Integer, db.ForeignKey('venue.id'))
+    
+    images = db.relationship("Images", back_populates="show")
+    bookings = db.relationship("Booking", back_populates="show")
+
+    def __repr__(self):
+        return '<Show {}>'.format(self.name)
+    
+    @hybrid_property
+    def schedules(self):
+        tmp = self.timing.split(',')
+        s = {}
+        for t in tmp:
+            dt = datetime.fromtimestamp(int(t)/1000)
+            
+            if dt.strftime("%d/%m/%y") not in s:
+                s[dt.strftime("%d/%m/%y")] = list()
+
+            s[dt.strftime("%d/%m/%y")].append(dt.strftime("%H:%M"))    
+            
+        return s
+    
+    @hybrid_property
+    def main_image(self):
+        return url_for('static', filename='image/'+ self.images[0].path )
+    
+    @hybrid_property
+    def place(self):
+        return self.venue
+    
+    def json(self):
+        return {'id': self.id,'name': self.name, 'price': self.price, 'image': self.main_image, 's': self.schedules}
+
+class Images(db.Model):
+    __tablename__ = "image"
+    id = db.Column(db.Integer, primary_key=True)
+    caption = db.Column(db.String(64), nullable=False)
+    path = db.Column(db.String(255), nullable=False)
+    show_id = db.Column(db.Integer, db.ForeignKey('show.id'))
+    show = db.relationship("Show", back_populates="images")
+
+def json(self):
+    return {'id': self.id, 'path': self.path}
+
+def to_dict(self):
+    keys = self.__mapper__.attrs.keys()
+    attrs = vars(self)
+    return { k : attrs[k]  for k in keys}
+
+
+class Booking( db.Model):
+    __tablename__ = "booking"
+    id = db.Column(db.Integer, primary_key=True)
+    date = db.Column(db.String(100), nullable=False)
+    showTime = db.Column(db.String(255), nullable=False)
+    sheats = db.Column(db.String(255), nullable=False)
+    price = db.Column(db.Integer)
+    timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+    show_id = db.Column(db.Integer, db.ForeignKey('show.id'))
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    show = db.relationship("Show", back_populates="bookings")
+
+    def __repr__(self):
+        return '<Show {}>'.format(self.date, self.showTime)   
