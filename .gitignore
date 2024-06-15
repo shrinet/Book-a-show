@@ -1,6 +1,6 @@
 .idea/
 .vscode/
-.virtualenv/
+bookashow/
 __pycache__/
 .tox/
 .coverage
