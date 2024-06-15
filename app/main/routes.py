@@ -5,6 +5,7 @@ from flask_login import current_user, login_required
 from app import db, admin
 from functools import wraps
 from app.main import bp
+from app.models import Show, User
 
 
 
